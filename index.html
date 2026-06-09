@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MIKE INC. — Launch Party</title>
+    <meta name="description" content="Ορκίζομαι. Σε θέλω εκεί. 27 Ιουνίου 2026.">
+    <meta property="og:title" content="MIKE INC. — Launch Party">
+    <meta property="og:description" content="Ορκίζομαι. Σε θέλω εκεί. 27.06.2026 · 22:30 · Καλλιθέα">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --bg:#0a0a0f;--surface:#14141f;--border:#1e1e2e;
+            --text:#e8e8ed;--dim:#8888a0;
+            --accent:#6c5ce7;--accent-light:#a29bfe;
+            --g1:#6c5ce7;--g2:#00cec9;--g3:#fd79a8;--gold:#fdcb6e;
+            --correct:#00b894;--wrong:#d63031;
+        }
+        html,body{height:100%;overflow:hidden;}
+        body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;touch-action:manipulation;}
+
+        /* BG */
+        .bg-glow{position:fixed;top:-50%;left:-50%;width:200%;height:200%;
+            background:radial-gradient(circle at 30% 40%,rgba(108,92,231,.08) 0%,transparent 50%),
+            radial-gradient(circle at 70% 60%,rgba(0,206,201,.06) 0%,transparent 50%),
+            radial-gradient(circle at 50% 80%,rgba(253,121,168,.04) 0%,transparent 50%);
+            animation:bgF 20s ease-in-out infinite;pointer-events:none;z-index:0;}
+        @keyframes bgF{0%,100%{transform:translate(0,0)}33%{transform:translate(-2%,1%)}66%{transform:translate(1%,-1%)}}
+
+        /* PROGRESS BAR */
+        .progress-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;gap:3px;padding:12px 12px 0;}
+        .progress-seg{flex:1;height:3px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;transition:background .3s;}
+        .progress-seg.done{background:var(--accent-light);}
+        .progress-seg.active{background:rgba(255,255,255,.3);}
+        .progress-seg.active .fill{width:100%;height:100%;background:var(--accent-light);animation:none;}
+
+        /* SLIDES */
+        .slides-container{position:relative;width:100%;height:100%;z-index:1;}
+        .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+            text-align:center;padding:60px 28px 40px;opacity:0;transform:scale(.96);
+            transition:opacity .4s,transform .4s;pointer-events:none;overflow-y:auto;}
+        .slide.active{opacity:1;transform:scale(1);pointer-events:auto;}
+
+        /* TAP ZONES */
+        .tap-zone{position:fixed;top:0;bottom:0;z-index:50;cursor:pointer;}
+        .tap-left{left:0;width:30%;}
+        .tap-right{right:0;width:70%;}
+
+        /* TYPOGRAPHY */
+        .s-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+            border:1px solid var(--border);border-radius:100px;
+            font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;
+            text-transform:uppercase;color:var(--accent-light);margin-bottom:24px;}
+        .s-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--g2);animation:pulse 2s infinite;}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+        .s-logo{font-size:clamp(52px,14vw,90px);font-weight:700;letter-spacing:-3px;line-height:1;
+            background:linear-gradient(135deg,var(--g1),var(--g2),var(--g3));background-size:200% 200%;
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+            animation:grad 6s ease-in-out infinite;}
+        @keyframes grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+        .s-sub{font-size:clamp(13px,3.5vw,17px);font-weight:500;letter-spacing:4px;
+            text-transform:uppercase;color:var(--dim);margin-top:8px;}
+        .s-tag{font-family:'Space Mono',monospace;font-size:clamp(13px,3vw,15px);
+            color:var(--dim);margin-top:28px;line-height:1.8;}
+        .s-tag span{color:var(--accent-light);}
+        .s-motto{font-family:'Space Mono',monospace;font-size:12px;color:var(--gold);
+            margin-top:14px;font-style:italic;}
+
+        .s-title{font-size:clamp(28px,7vw,42px);font-weight:700;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;}
+        .s-text{font-size:15px;line-height:1.7;color:var(--dim);max-width:440px;}
+        .s-section-tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;
+            text-transform:uppercase;color:var(--g2);margin-bottom:10px;}
+        .s-emoji{font-size:48px;margin-bottom:16px;}
+
+        /* COUNTDOWN */
+        .countdown{display:flex;gap:10px;justify-content:center;margin-top:32px;}
+        .cd-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+            padding:14px 10px;min-width:65px;text-align:center;}
+        .cd-num{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;
+            background:linear-gradient(135deg,var(--g1),var(--g2));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .cd-unit{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-top:3px;}
+
+        /* TAP HINT */
+        .tap-hint{position:absolute;bottom:24px;left:0;right:0;text-align:center;
+            font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;
+            text-transform:uppercase;color:var(--dim);opacity:.6;animation:fadeIn 1s 1.5s both;}
+        @keyframes fadeIn{from{opacity:0}to{opacity:.6}}
+
+        /* QUIZ */
+        .quiz-question{font-size:clamp(20px,5vw,28px);font-weight:700;margin:16px 0 24px;line-height:1.3;}
+        .quiz-options{display:grid;gap:10px;width:100%;max-width:400px;}
+        .quiz-opt{background:var(--surface);border:2px solid var(--border);border-radius:12px;
+            padding:16px 20px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;
+            color:var(--text);cursor:pointer;transition:all .25s;text-align:left;
+            display:flex;align-items:center;gap:12px;}
+        .quiz-opt:hover{border-color:var(--accent);transform:translateY(-1px);}
+        .quiz-opt.correct{border-color:var(--correct);background:rgba(0,184,148,.1);color:var(--correct);}
+        .quiz-opt.wrong{border-color:var(--wrong);background:rgba(214,48,49,.1);color:var(--wrong);}
+        .quiz-opt.disabled{pointer-events:none;opacity:.5;}
+        .quiz-opt.correct.disabled,.quiz-opt.wrong.disabled{opacity:1;}
+        .opt-letter{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;
+            width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+            background:rgba(255,255,255,.05);flex-shrink:0;}
+        .quiz-feedback{font-family:'Space Mono',monospace;font-size:13px;margin-top:16px;min-height:20px;}
+
+        /* RESULT */
+        .result-score{font-size:clamp(60px,16vw,100px);font-weight:700;
+            background:linear-gradient(135deg,var(--g1),var(--g2));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .result-label{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;
+            text-transform:uppercase;color:var(--dim);margin-top:4px;}
+        .result-msg{font-size:18px;font-weight:600;margin-top:20px;line-height:1.4;}
+
+        /* DETAIL CARDS */
+        .detail-cards{display:grid;gap:12px;width:100%;max-width:420px;margin-top:20px;text-align:left;}
+        .d-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+        .d-icon{font-size:22px;margin-bottom:6px;}
+        .d-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+        .d-value{font-size:17px;font-weight:600;margin-top:2px;}
+        .d-sub{font-size:12px;color:var(--dim);margin-top:2px;}
+
+        /* MAP BTN */
+        .map-btn{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:10px 18px;
+            background:linear-gradient(135deg,var(--g1),var(--g2));border:none;border-radius:100px;
+            color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;
+            text-decoration:none;transition:transform .2s;}
+        .map-btn:hover{transform:translateY(-2px);}
+
+        /* TIMELINE */
+        .timeline{width:100%;max-width:400px;margin-top:16px;text-align:left;}
+        .tl-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+        .tl-item:last-child{border:none;}
+        .tl-time{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent-light);min-width:52px;}
+        .tl-name{font-size:14px;font-weight:600;}
+        .tl-desc{font-size:12px;color:var(--dim);margin-top:2px;}
+
+        /* RULES */
+        .rules{width:100%;max-width:400px;margin-top:16px;text-align:left;display:grid;gap:10px;}
+        .rule{display:flex;align-items:flex-start;gap:14px;padding:16px;
+            background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+        .rule-n{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--g3);min-width:30px;}
+        .rule-t{font-size:14px;line-height:1.5;}
+        .rule-t strong{color:var(--gold);}
+
+        /* UPLOAD BTN */
+        .upload-btn{display:inline-flex;align-items:center;gap:10px;margin-top:18px;padding:14px 28px;
+            background:linear-gradient(135deg,var(--gold),var(--g3));border:none;border-radius:100px;
+            color:var(--bg);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
+            text-decoration:none;transition:transform .2s;}
+        .upload-btn:hover{transform:translateY(-2px);}
+        .upload-note{font-family:'Space Mono',monospace;font-size:10px;color:var(--dim);margin-top:10px;}
+
+        /* CONFETTI */
+        .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:200;overflow:hidden;}
+        .confetti-piece{position:absolute;width:10px;height:10px;top:-10px;border-radius:2px;
+            animation:confettiFall 2.5s ease-in forwards;}
+        @keyframes confettiFall{
+            0%{transform:translateY(0) rotate(0deg);opacity:1;}
+            100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
+        }
+
+        /* MOBILE */
+        @media(max-width:400px){
+            .slide{padding:50px 20px 30px;}
+            .cd-item{min-width:58px;padding:10px 6px;}
+            .cd-num{font-size:22px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- TAP ZONES -->
+    <div class="tap-zone tap-left" id="tapLeft"></div>
+    <div class="tap-zone tap-right" id="tapRight"></div>
+
+    <!-- SLIDES -->
+    <div class="slides-container" id="slidesContainer"></div>
+
+    <!-- CONFETTI -->
+    <div class="confetti-container" id="confetti"></div>
+
+    <script>
+    // ═══════════════════════════════════════════
+    // SLIDES DATA
+    // ═══════════════════════════════════════════
+    const PARTY_DATE = new Date('2026-06-27T22:30:00+03:00');
+    let quizScore = 0;
+    let quizTotal = 5;
+
+    const slides = [
+        // 0 — HERO
+        { type:'content', html:`
+            <div class="s-badge"><span>It's official</span></div>
+            <h1 class="s-logo">MIKE INC.</h1>
+            <p class="s-sub">Launch Party</p>
+            <p class="s-tag"><span>Ορκίζομαι</span>.<br><span>Γιορτάζω</span>.<br>Σε θέλω εκεί.</p>
+            <p class="s-motto">"One step at a time." — αλλά εκείνο το βράδυ τρέχουμε.</p>
+            <div class="countdown" id="countdown">
+                <div class="cd-item"><div class="cd-num" id="cd-d">--</div><div class="cd-unit">Μέρες</div></div>
+                <div class="cd-item"><div class="cd-num" id="cd-h">--</div><div class="cd-unit">Ώρες</div></div>
+                <div class="cd-item"><div class="cd-num" id="cd-m">--</div><div class="cd-unit">Λεπτά</div></div>
+                <div class="cd-item"><div class="cd-num" id="cd-s">--</div><div class="cd-unit">Δευτ.</div></div>
+            </div>
+            <div class="tap-hint">Tap για να συνεχίσεις →</div>
+        `},
+        // 1 — OCCASION
+        { type:'content', html:`
+            <div class="s-emoji">🎓</div>
+            <div class="s-section-tag">// Η αφορμή</div>
+            <h2 class="s-title">Τα κατάφερα.<br>Θέλω να 'σαι εδώ.</h2>
+            <p class="s-text">Τελειώνω Entrepreneurship Management στο Deree. 4 χρόνια, άπειροι καφέδες, ένα πτυχίο. Θέλω να το γιορτάσω μαζί σου.</p>
+        `},
+        // 2 — QUIZ INTRO
+        { type:'content', html:`
+            <div class="s-emoji">🧠</div>
+            <div class="s-section-tag">// Mini Game</div>
+            <h2 class="s-title">Πόσο καλά<br>με ξέρεις;</h2>
+            <p class="s-text">5 ερωτήσεις. Χωρίς Google. Χωρίς βοήθεια. Μόνο η μνήμη σου και η φιλία μας.</p>
+            <p class="s-motto" style="margin-top:24px;">Tap για να ξεκινήσεις →</p>
+        `},
+        // 3 — Q1
+        { type:'quiz', question:'Πού μεγάλωσα;',
+          options:['Αθήνα','Μέτσοβο','Ιωάννινα','Θεσσαλονίκη'],
+          correct:1, feedback_yes:'Μέτσοβο represent! 🏔️', feedback_no:'Μέτσοβο! Χωριό 2.000 κατοίκων, Hotel Apollon, ο παππούς.' },
+        // 4 — Q2
+        { type:'quiz', question:'Πόσους καφέδες πίνω τη μέρα;',
+          options:['Κανέναν','1-2','3-4','5+'],
+          correct:1, feedback_yes:'Ναι, μόνο 1-2. Δεν είμαι μηχανή.', feedback_no:'1-2 μόνο! Ήρεμος τύπος.' },
+        // 5 — Q3
+        { type:'quiz', question:'Ποιο είναι το αγαπημένο μου φαγητό;',
+          options:['Πίτσα','Σουβλάκι','Κοντοσούβλι','Πίτα Μετσόβου'],
+          correct:2, feedback_yes:'Κοντοσούβλι gang! 🥩', feedback_no:'Κοντοσούβλι. Μη ξεχνάς.' },
+        // 6 — Q4
+        { type:'quiz', question:'Τι ΔΕΝ έχω κάνει ποτέ στη ζωή μου;',
+          options:['Να πάω σε συναυλία','Να δω Harry Potter','Να οδηγήσω μηχανή','Να ταξιδέψω εξωτερικό'],
+          correct:1, feedback_yes:'Ναι! Δεν έχω δει Harry Potter. Deal with it. 🧙‍♂️', feedback_no:'Δεν έχω δει HARRY POTTER. Ναι, σοβαρά. Ούτε ένα.' },
+        // 7 — Q5
+        { type:'quiz', question:'Ποια είναι η φράση μου;',
+          options:['"YOLO"','"Βήμα βήμα και όλα καλά θα πάνε"','"Θα δούμε"','"Άντε ρε"'],
+          correct:1, feedback_yes:'Βήμα βήμα! Και "Όλα γίνονται για καλό." 💪', feedback_no:'"Βήμα βήμα και όλα καλά θα πάνε." Αυτή είναι.' },
+        // 8 — RESULT
+        { type:'result' },
+        // 9 — WHEN & WHERE
+        { type:'content', html:`
+            <div class="s-section-tag">// Πού & Πότε</div>
+            <h2 class="s-title">Σημείωσέ τα.<br>Σε περιμένω.</h2>
+            <div class="detail-cards">
+                <div class="d-card">
+                    <div class="d-icon">📅</div>
+                    <div class="d-label">Ημερομηνία</div>
+                    <div class="d-value">Σάββατο 27 Ιουνίου 2026</div>
+                </div>
+                <div class="d-card">
+                    <div class="d-icon">⏰</div>
+                    <div class="d-label">Ώρα</div>
+                    <div class="d-value">22:30</div>
+                    <div class="d-sub">Αν αργήσεις, σου κρατάω πίτσα. Ίσως.</div>
+                </div>
+                <div class="d-card">
+                    <div class="d-icon">📍</div>
+                    <div class="d-label">Τοποθεσία</div>
+                    <div class="d-value">Εσπερίδων 64, Καλλιθέα</div>
+                    <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Εσπερίδων+64+Καλλιθέα" target="_blank" rel="noopener">🗺️ Χάρτης</a>
+                </div>
+            </div>
+        `},
+        // 10 — TIMELINE
+        { type:'content', html:`
+            <div class="s-section-tag">// Το πρόγραμμα</div>
+            <h2 class="s-title">Πώς θα κυλήσει<br>η βραδιά μας.</h2>
+            <div class="timeline">
+                <div class="tl-item"><div class="tl-time">22:30</div><div><div class="tl-name">🚪 Doors Open</div><div class="tl-desc">Φτάνεις, σε αγκαλιάζω, τα κλασικά.</div></div></div>
+                <div class="tl-item"><div class="tl-time">23:00</div><div><div class="tl-name">🍕 Fuel Up</div><div class="tl-desc">Πίτσες, ποτά, αναψυκτικά.</div></div></div>
+                <div class="tl-item"><div class="tl-time">23:30</div><div><div class="tl-name">🎶 Playlist: ON</div><div class="tl-desc">Τα ηχεία ανεβαίνουν.</div></div></div>
+                <div class="tl-item"><div class="tl-time">00:00</div><div><div class="tl-name">🥂 Midnight Toast</div><div class="tl-desc">Σηκώνω ποτήρι. Εσύ το ίδιο.</div></div></div>
+                <div class="tl-item"><div class="tl-time">00:30+</div><div><div class="tl-name">🌙 Συνεχίζεται...</div><div class="tl-desc">Ό,τι γίνει μένει μεταξύ μας.</div></div></div>
+            </div>
+        `},
+        // 11 — HOUSE RULES
+        { type:'content', html:`
+            <div class="s-section-tag">// Κανόνες σπιτιού</div>
+            <h2 class="s-title">Οι κανόνες<br>του σπιτιού μου.</h2>
+            <div class="rules">
+                <div class="rule"><div class="rule-n">01</div><div class="rule-t"><strong>Casual καλοκαιρινό.</strong> Σορτσάκι, t-shirt — you're good. Κοστούμι = σερβίρεις.</div></div>
+                <div class="rule"><div class="rule-n">02</div><div class="rule-t"><strong>Κανένα δώρο.</strong> Φέρε μόνο τη διάθεσή σου.</div></div>
+                <div class="rule"><div class="rule-n">03</div><div class="rule-t"><strong>Φωτό: ελεύθερα.</strong> Αλλά βάλε τουλάχιστον ένα καλό filter.</div></div>
+                <div class="rule"><div class="rule-n">04</div><div class="rule-t"><strong>"Τι θα κάνεις με το πτυχίο;"</strong> = πίνεις. No exceptions.</div></div>
+            </div>
+        `},
+        // 12 — PHOTOS
+        { type:'content', html:`
+            <div class="s-emoji">📸</div>
+            <div class="s-section-tag">// Οι αναμνήσεις</div>
+            <h2 class="s-title">Στείλε μου<br>τις φωτό μας.</h2>
+            <p class="s-text">Ψάξε στο gallery σου. Εκδρομές, βραδινές, χαζομάρες. Ανέβασέ τες <strong>πριν το party</strong> — θα τις παίξω σε projector εκείνο το βράδυ.</p>
+            <a class="upload-btn" href="https://drive.google.com/drive/folders/1sHzk5GMirI4cN10QRAu-hKBTnHD8gL1v?usp=sharing" target="_blank" rel="noopener">📁 Ανέβασε Φωτό</a>
+            <p class="upload-note">Google Drive · μέχρι τις 26/06</p>
+        `},
+        // 13 — FINAL
+        { type:'content', html:`
+            <div class="s-emoji">🚀</div>
+            <h2 class="s-title" style="background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Σε περιμένω<br>στις 27.</h2>
+            <p class="s-text" style="margin-top:8px;">27.06.2026 · 22:30 · Εσπερίδων 64, Καλλιθέα</p>
+            <p class="s-motto" style="margin-top:24px;">Άντε, μην αργείς. Φέρε και κέφι. 🤙</p>
+            <p style="font-family:'Space Mono',monospace;font-size:9px;color:var(--dim);margin-top:48px;opacity:.4;">© 2026 Mike Inc. · Ψέματα, δεν κρατάω κανένα right.</p>
+        `}
+    ];
+
+    // ═══════════════════════════════════════════
+    // ENGINE
+    // ═══════════════════════════════════════════
+    let current = 0;
+    let answered = new Set(); // quiz slides that have been answered
+    const total = slides.length;
+
+    // Build progress bar
+    const progBar = document.getElementById('progressBar');
+    for(let i=0;i<total;i++){
+        const seg = document.createElement('div');
+        seg.className = 'progress-seg';
+        seg.dataset.idx = i;
+        progBar.appendChild(seg);
+    }
+
+    // Build slides
+    const container = document.getElementById('slidesContainer');
+    slides.forEach((s, i) => {
+        const div = document.createElement('div');
+        div.className = 'slide' + (i===0?' active':'');
+        div.dataset.idx = i;
+
+        if(s.type === 'content'){
+            div.innerHTML = s.html;
+        } else if(s.type === 'quiz'){
+            const letters = ['A','B','C','D'];
+            div.innerHTML = `
+                <div class="s-section-tag">// Ερώτηση ${i - 2} από ${quizTotal}</div>
+                <h2 class="quiz-question">${s.question}</h2>
+                <div class="quiz-options">
+                    ${s.options.map((opt,j) => `
+                        <button class="quiz-opt" data-idx="${j}" onclick="answerQuiz(${i},${j})">
+                            <span class="opt-letter">${letters[j]}</span> ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="quiz-feedback" id="feedback-${i}"></div>
+            `;
+        } else if(s.type === 'result'){
+            div.innerHTML = `
+                <div class="s-section-tag">// Αποτέλεσμα</div>
+                <div class="result-score" id="resultScore">0/5</div>
+                <div class="result-label">Σωστές απαντήσεις</div>
+                <div class="result-msg" id="resultMsg"></div>
+                <p class="s-motto" style="margin-top:24px;">Tap για τα details του party →</p>
+            `;
+        }
+
+        container.appendChild(div);
+    });
+
+    function updateProgress(){
+        document.querySelectorAll('.progress-seg').forEach((seg,i) => {
+            seg.classList.remove('done','active');
+            if(i < current) seg.classList.add('done');
+            else if(i === current) seg.classList.add('active');
+        });
+    }
+
+    function updateTapZones(){
+        const isQuiz = slides[current].type === 'quiz' && !answered.has(current);
+        document.getElementById('tapLeft').style.pointerEvents = isQuiz ? 'none' : 'auto';
+        document.getElementById('tapRight').style.pointerEvents = isQuiz ? 'none' : 'auto';
+    }
+
+    function goTo(idx){
+        if(idx < 0 || idx >= total) return;
+
+        // Block forward on unanswered quiz
+        if(idx > current && slides[current].type === 'quiz' && !answered.has(current)) return;
+
+        const allSlides = document.querySelectorAll('.slide');
+        allSlides[current].classList.remove('active');
+        current = idx;
+        allSlides[current].classList.add('active');
+        updateProgress();
+        updateTapZones();
+
+        // If result slide, populate
+        if(slides[current].type === 'result'){
+            document.getElementById('resultScore').textContent = quizScore + '/' + quizTotal;
+            const msgs = [
+                '0/5; Σοβαρά; Δεν πειράζει — σε συμπαθώ, έλα στο party μου. 😅',
+                '1/5. Χμμ. Αλλά ξέρεις τι; Επειδή σε γουστάρω, σε αφήνω να έρθεις. 🤷',
+                '2/5. Ε ΟΚ, αποδεκτό. Άντε, επειδή σε συμπαθώ, έλα να τα πούμε. 👏',
+                '3/5. Α ωραίος/α! Με ξέρεις αρκετά. Σε θέλω εκεί 100%. 🔥',
+                '4/5. Σχεδόν τέλειο! Με ξέρεις καλύτερα κι από μένα. VIP entry. 💪',
+                '5/5! LEGEND. Είσαι ο/η αγαπημένος/η μου. Ελπίζω να το ξέρεις. 🏆'
+            ];
+            document.getElementById('resultMsg').textContent = msgs[quizScore];
+            if(quizScore >= 3) fireConfetti();
+        }
+    }
+
+    // Quiz answer
+    window.answerQuiz = function(slideIdx, optIdx){
+        if(answered.has(slideIdx)) return;
+        answered.add(slideIdx);
+
+        const s = slides[slideIdx];
+        const slideEl = document.querySelectorAll('.slide')[slideIdx];
+        const opts = slideEl.querySelectorAll('.quiz-opt');
+        const fb = document.getElementById('feedback-'+slideIdx);
+        const isCorrect = optIdx === s.correct;
+
+        if(isCorrect) quizScore++;
+
+        opts.forEach((o,j) => {
+            o.classList.add('disabled');
+            if(j === s.correct) o.classList.add('correct');
+            else if(j === optIdx && !isCorrect) o.classList.add('wrong');
+        });
+
+        fb.textContent = isCorrect ? '✅ ' + s.feedback_yes : '❌ ' + s.feedback_no;
+        fb.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+
+        if(isCorrect) fireConfetti();
+        updateTapZones();
+
+        // Auto-advance after 2s
+        setTimeout(() => goTo(current + 1), 2000);
+    };
+
+    // Tap navigation
+    document.getElementById('tapRight').addEventListener('click', () => goTo(current + 1));
+    document.getElementById('tapLeft').addEventListener('click', () => goTo(current - 1));
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+        if(e.key === 'ArrowRight' || e.key === ' ') goTo(current + 1);
+        if(e.key === 'ArrowLeft') goTo(current - 1);
+    });
+
+    // Countdown
+    function updateCD(){
+        const diff = PARTY_DATE - new Date();
+        if(diff <= 0){
+            ['cd-d','cd-h','cd-m','cd-s'].forEach(id => {
+                document.getElementById(id) && (document.getElementById(id).textContent = '🎉');
+            });
+            return;
+        }
+        const el = (id) => document.getElementById(id);
+        if(el('cd-d')) el('cd-d').textContent = String(Math.floor(diff/(1e3*60*60*24))).padStart(2,'0');
+        if(el('cd-h')) el('cd-h').textContent = String(Math.floor((diff%(1e3*60*60*24))/(1e3*60*60))).padStart(2,'0');
+        if(el('cd-m')) el('cd-m').textContent = String(Math.floor((diff%(1e3*60*60))/(1e3*60))).padStart(2,'0');
+        if(el('cd-s')) el('cd-s').textContent = String(Math.floor((diff%(1e3*60))/1e3)).padStart(2,'0');
+    }
+    updateCD(); setInterval(updateCD, 1000);
+
+    // Confetti
+    function fireConfetti(){
+        const c = document.getElementById('confetti');
+        const colors = ['#6c5ce7','#00cec9','#fd79a8','#fdcb6e','#a29bfe','#55efc4'];
+        for(let i=0;i<40;i++){
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random()*100 + '%';
+            piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+            piece.style.animationDelay = Math.random()*0.5 + 's';
+            piece.style.animationDuration = (2 + Math.random()*1.5) + 's';
+            piece.style.width = (6 + Math.random()*8) + 'px';
+            piece.style.height = (6 + Math.random()*8) + 'px';
+            piece.style.borderRadius = Math.random()>.5 ? '50%' : '2px';
+            c.appendChild(piece);
+            setTimeout(()=>piece.remove(), 3000);
+        }
+    }
+
+    updateProgress();
+    updateTapZones();
+    </script>
+</body>
+</html>
