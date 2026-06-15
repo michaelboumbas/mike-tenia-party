@@ -127,6 +127,13 @@
             text-decoration:none;transition:transform .2s;}
         .map-btn:hover{transform:translateY(-2px);}
 
+        /* CALENDAR BTN */
+        .cal-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+            background:rgba(108,92,231,.15);border:1px solid var(--accent);border-radius:8px;
+            color:var(--accent-light);font-family:'Space Mono',monospace;font-size:11px;
+            text-decoration:none;cursor:pointer;transition:all .2s;}
+        .cal-btn:hover{background:rgba(108,92,231,.25);transform:translateY(-1px);}
+
         /* TIMELINE */
         .timeline{width:100%;max-width:400px;margin-top:16px;text-align:left;}
         .tl-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
@@ -210,7 +217,7 @@
             <div class="s-emoji">🎓🎂</div>
             <div class="s-section-tag">// Η αφορμή (x2)</div>
             <h2 class="s-title">Δύο αφορμές.<br>Μία βραδιά.</h2>
-            <p class="s-text">Εγώ τελειώνω Entrepreneurship Management στο Deree — 4 χρόνια, άπειροι καφέδες, ένα πτυχίο.<br><br>Η Τένια γιορτάζει τα 25α γενέθλιά της.<br><br>Θέλουμε να το γιορτάσουμε μαζί σου.</p>
+            <p class="s-text">Εγώ τελειώνω Entrepreneurship Management στο Deree — 4 χρόνια, άπειροι καφέδες, ένα πτυχίο.<br><br>Η Τένια γιορτάζει τα 19α γενέθλιά της.<br><br>Θέλουμε να το γιορτάσουμε μαζί σου.</p>
         `},
         // 2 — TEAM PICK
         { type:'content', html:`
@@ -263,6 +270,10 @@
                     <div class="d-icon">📅</div>
                     <div class="d-label">Ημερομηνία</div>
                     <div class="d-value">Σάββατο 27 Ιουνίου 2026</div>
+                    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                        <a class="cal-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mike+%26+Tenia+%E2%80%94+Double+Celebration+%F0%9F%8E%93%F0%9F%8E%82&dates=20260627T193000Z/20260628T003000Z&location=%CE%95%CF%83%CF%80%CE%B5%CF%81%CE%AF%CE%B4%CF%89%CE%BD+64%2C+%CE%9A%CE%B1%CE%BB%CE%BB%CE%B9%CE%B8%CE%AD%CE%B1&details=%CE%91%CF%80%CE%BF%CF%86%CE%BF%CE%AF%CF%84%CE%B7%CF%83%CE%B7+%C3%97+%CE%93%CE%B5%CE%BD%CE%AD%CE%B8%CE%BB%CE%B9%CE%B1.+%CE%A3%CE%B5+%CF%80%CE%B5%CF%81%CE%B9%CE%BC%CE%AD%CE%BD%CE%BF%CF%85%CE%BC%CE%B5!+%F0%9F%8E%89" target="_blank" rel="noopener">📆 Google</a>
+                        <button class="cal-btn" onclick="downloadICS()">🍎 Apple / Android</button>
+                    </div>
                 </div>
                 <div class="d-card">
                     <div class="d-icon">⏰</div>
@@ -469,6 +480,35 @@
         }
         el.style.opacity = '1';
         if(hint) hint.style.opacity = '.6';
+    };
+
+    // Download .ics for Apple / Android calendars
+    window.downloadICS = function() {
+        const ics = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Mike & Tenia Party//EN',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'BEGIN:VEVENT',
+            'DTSTART:20260627T193000Z',
+            'DTEND:20260628T003000Z',
+            'SUMMARY:Mike & Tenia — Double Celebration 🎓🎂',
+            'LOCATION:Εσπερίδων 64\\, Καλλιθέα',
+            'DESCRIPTION:Αποφοίτηση × Γενέθλια. Σε περιμένουμε!\\nhttps://michaelboumbas.github.io/mike-tenia-party/',
+            'STATUS:CONFIRMED',
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\r\n');
+        const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mike-tenia-party.ics';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
 
     // Countdown
